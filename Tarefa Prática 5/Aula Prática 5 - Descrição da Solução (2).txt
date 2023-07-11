@@ -1,0 +1,26 @@
+Pré-ordem (Pré-fixada)
+Visita o nó e depois os filhos da esquerda e da direita
+In-ordem (Central ou Infixada)
+Visita o filho da esquerda, o nó, e depois o filho da direita
+Pós-ordem (Pós-fixada)
+Visita os filhos da esquerda e da direita e depois o nó
+
+Queremos saber se um nó é ancestral do outro, para isso vamos utilizar uma propriedade que é contrária entre o caminho Pré-ordem e Pós-ordem, em que momento se imprime o nó.Além disso, o fato de ambas analisarem a esquerda antes
+da direita.
+
+Repare que a Pré-ordem inicializa pelo nó e a Pós-ordem finaliza pelo nó. Seguindo informalmente, se imprimimos todos os nós primeiro na Pré-ordem e na Pós-ordem o contrário, podemos pensar que faz sentido que se i vem antes de j 
+na Pré-ordem e i vem depois de j na Pós-ordem i é ancestral de j, devido essa ordem de impressão dos nós (na Pré-ordem ancestral para descendente e na Pós-ordem descendente para ancestral).
+
+Entretando, não fica tão claro dessa maneira que essa lógica é definitiva.
+Portanto, supondo que i aparece antes de j na travessia Pré-ordem e que i aparece depois de j na travessia Pós-ordem. Vamos provar que não é possível i não ser ancestral de j. 
+
+Dessa forma, ou eles não tem parentesco nenhum ou j é ancestral de i. 
+
+j não pode ser ancestral de i, pois um nó só é visitado na pré-ordem depois que todos os seus ancestrais tenham sidos visitado antes. Logo, j e i não podem possuir parentesco nenhum já que j não é ancestral de i.
+
+Coloque a como sendo o ancestral em comum mais perto de i e j.
+i está na subárvore a esquerda de a e j está na direita: não é possível, pois se confere primeiro todo o lado esquerdo na Pós-ordem, ou seja, i será visto antes de j na Pós-ordem, o que contradiz a suposição inicial.
+i está na subárvore a direita dee a e j está na esquerda: não é possível, pois na pre ordem visita-se primeiro a esquerda também, então j estaria antes de i na Pré-ordem.
+se estão na mesma subárvore não é possível que elas não sejam ancestrais uma da outra o que está contra nossa hipótese desse cenário em que j e i não possuem parentesco.
+
+Portanto, por contradição ficou provado que se i aparece antes de j na travessia Pré-ordem e que i aparece depois de j na travessia Pós-ordem, i é ancestral de j.
