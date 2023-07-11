@@ -1,0 +1,97 @@
+C9.c 
+
+1.  Na função f o malloc gera 10 espaços (0 até 9), porém há a tentativa de acessar a posição 10 que não existe. Além disso, não há free para liberar o malloc. 
+
+2. 
+
+==1190== Memcheck, a memory error detector 
+
+==1190== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al. 
+
+==1190== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info 
+
+==1190== Command: ./programa9 
+
+==1190==  
+
+==1190== Invalid write of size 4 
+
+==1190==    at 0x10916B: f (c9.c:6) 
+
+==1190==    by 0x109180: main (c9.c:11) 
+
+==1190==  Address 0x4a8c068 is 0 bytes after a block of size 40 alloc'd 
+
+==1190==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so) 
+
+==1190==    by 0x10915E: f (c9.c:5) 
+
+==1190==    by 0x109180: main (c9.c:11) 
+
+==1190==  
+
+==1190==  
+
+==1190== HEAP SUMMARY: 
+
+==1190==     in use at exit: 40 bytes in 1 blocks 
+
+==1190==   total heap usage: 1 allocs, 0 frees, 40 bytes allocated 
+
+==1190==  
+
+==1190== LEAK SUMMARY: 
+
+==1190==    definitely lost: 40 bytes in 1 blocks 
+
+==1190==    indirectly lost: 0 bytes in 0 blocks 
+
+==1190==      possibly lost: 0 bytes in 0 blocks 
+
+==1190==    still reachable: 0 bytes in 0 blocks 
+
+==1190==         suppressed: 0 bytes in 0 blocks 
+
+==1190== Rerun with --leak-check=full to see details of leaked memory 
+
+==1190==  
+
+==1190== For lists of detected and suppressed errors, rerun with: -s 
+
+==1190== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)  
+
+Temos um invalid write of size 4. Além disso, os 40 bytes foram definitivamente perdidos. Esse relatório está de acordo com o esperado, pois a escrita inválida seria a da posição 10 de x e a falta de desalocação ocorre devido ao fato de que não há free. 
+
+3.  Portanto, ao invés de tentar escrever no x[10], vou passar para o x[9] e acrescentar um free(x) dentro da função f. 
+
+4.  
+
+==1432== Memcheck, a memory error detector 
+
+==1432== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al. 
+
+==1432== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info 
+
+==1432== Command: ./programa_reparado9 
+
+==1432==  
+
+==1432==  
+
+==1432== HEAP SUMMARY: 
+
+==1432==     in use at exit: 0 bytes in 0 blocks 
+
+==1432==   total heap usage: 1 allocs, 1 frees, 40 bytes allocated 
+
+==1432==  
+
+==1432== All heap blocks were freed -- no leaks are possible 
+
+==1432==  
+
+==1432== For lists of detected and suppressed errors, rerun with: -s 
+
+==1432== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0) 
+
+Após as duas alterações o valgrind informa que não há nenhum erro. 

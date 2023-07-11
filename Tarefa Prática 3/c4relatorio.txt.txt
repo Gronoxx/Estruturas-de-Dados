@@ -1,0 +1,107 @@
+C4.c 
+
+1.Esse código está um pouco mais complicado, por não lembrar a fundo os detalhes de malloc e free em C (pois em PDS2 vemos C++), não tenho certeza de qual é o problema, mas diria que é a desalocação do rotatio3D->data, o qual foi alocada dentro de um for por index e não foi desalocado dessa maneira. Além disso, temos o erro claro de declaração dupla do rotation3d tanto global quanto dentro da main e a desalocação de text sendo que não houve alocação. 
+
+2.O valgrind informa: 
+
+==6425== Memcheck, a memory error detector 
+
+==6425== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al. 
+
+==6425== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info 
+
+==6425== Command: ./programa4 
+
+==6425==  
+
+==6425== Use of uninitialised value of size 8 
+
+==6425==    at 0x10917A: main (c4.c:13) 
+
+==6425==  
+
+==6425== Invalid write of size 4 
+
+==6425==    at 0x10917A: main (c4.c:13) 
+
+==6425==  Address 0x0 is not stack'd, malloc'd or (recently) free'd 
+
+==6425==  
+
+==6425==  
+
+==6425== Process terminating with default action of signal 11 (SIGSEGV) 
+
+==6425==  Access not within mapped region at address 0x0 
+
+==6425==    at 0x10917A: main (c4.c:13) 
+
+==6425==  If you believe this happened as a result of a stack 
+
+==6425==  overflow in your program's main thread (unlikely but 
+
+==6425==  possible), you can try to increase the size of the 
+
+==6425==  main thread stack using the --main-stacksize= flag. 
+
+==6425==  The main thread stack size used in this run was 8388608. 
+
+==6425==  
+
+==6425== HEAP SUMMARY: 
+
+==6425==     in use at exit: 0 bytes in 0 blocks 
+
+==6425==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated 
+
+==6425==  
+
+==6425== All heap blocks were freed -- no leaks are possible 
+
+==6425==  
+
+==6425== Use --track-origins=yes to see where uninitialised values come from 
+
+==6425== For lists of detected and suppressed errors, rerun with: -s 
+
+==6425== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0) 
+
+Segmentation fault  
+
+Nesse caso, achei melhor utilizar o debugger para me auxiliar com o valgrind. Dessa forma, foi possível perceber claramente que o causador do segmentation fault apontado pelo valgrind foi a desalocação do text e a partir daí o código não rodava. Porém, não foi tão claro a partir do debugger o que ocorreu na linha 13 que o valgrind reclamou. 
+
+3.Nessa perspectiva, trabalhamos com as informações que já temos que seria a dupla declaração da struct, o uso de uma variável não inicializada de tamanho 8 (ponteiro) e escrita inválida de tamanho 4. Corrigindo esses pontos: removemos a primeira declaração de rotation3d(global). Inicializamos o ponteiro dentro da função main junto com sua declaração. Retiramos a desalocação de text que causa segmentation fault. E tiramos o comentário do for que desaloca cada index de data[i] , pois como existe a suspeita dele não estar sendo desalocado corretamente como informado no item 1, quero analisar essa possibilidade. 
+
+  
+
+4.Como resultado o Valgrind retornou: 
+
+==7378== Memcheck, a memory error detector 
+
+==7378== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al. 
+
+==7378== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info 
+
+==7378== Command: ./programa_reparado4 
+
+==7378==  
+
+==7378==  
+
+==7378== HEAP SUMMARY: 
+
+==7378==     in use at exit: 0 bytes in 0 blocks 
+
+==7378==   total heap usage: 7 allocs, 7 frees, 8,664 bytes allocated 
+
+==7378==  
+
+==7378== All heap blocks were freed -- no leaks are possible 
+
+==7378==  
+
+==7378== For lists of detected and suppressed errors, rerun with: -s 
+
+==7378== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0) 
+
+Não há mais nenhum vazamento de memória e o código executa sua função perfeitamente. 

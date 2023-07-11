@@ -1,0 +1,315 @@
+C19.c 
+
+1.  O erro mais evidente seria a não liberação do buf, porém não tenho clareza se é o único erro. 
+
+2.  Como não há certeza, usarei o debugger e o valgrind. 
+
+Valgrind: 
+
+==12320== Memcheck, a memory error detector 
+
+==12320== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al. 
+
+==12320== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info 
+
+==12320== Command: ./programa19 
+
+==12320==  
+
+enter a number: 
+
+5 
+
+==12320== Invalid write of size 1 
+
+==12320==    at 0x48F0757: _IO_str_overflow (strops.c:133) 
+
+==12320==    by 0x48EEEB3: _IO_default_xsputn (genops.c:399) 
+
+==12320==    by 0x48EEEB3: _IO_default_xsputn (genops.c:370) 
+
+==12320==    by 0x48D61CC: outstring_func (vfprintf-internal.c:239) 
+
+==12320==    by 0x48D61CC: __vfprintf_internal (vfprintf-internal.c:1263) 
+
+==12320==    by 0x48E2A08: __vsprintf_internal (iovsprintf.c:95) 
+
+==12320==    by 0x48C19A7: sprintf (sprintf.c:30) 
+
+==12320==    by 0x1092A5: printSum (c19.c:22) 
+
+==12320==    by 0x1092DD: main (c19.c:28) 
+
+==12320==  Address 0x0 is not stack'd, malloc'd or (recently) free'd 
+
+==12320==  
+
+==12320==  
+
+==12320== Process terminating with default action of signal 11 (SIGSEGV) 
+
+==12320==  Access not within mapped region at address 0x0 
+
+==12320==    at 0x48F0757: _IO_str_overflow (strops.c:133) 
+
+==12320==    by 0x48EEEB3: _IO_default_xsputn (genops.c:399) 
+
+==12320==    by 0x48EEEB3: _IO_default_xsputn (genops.c:370) 
+
+==12320==    by 0x48D61CC: outstring_func (vfprintf-internal.c:239) 
+
+==12320==    by 0x48D61CC: __vfprintf_internal (vfprintf-internal.c:1263) 
+
+==12320==    by 0x48E2A08: __vsprintf_internal (iovsprintf.c:95) 
+
+==12320==    by 0x48C19A7: sprintf (sprintf.c:30) 
+
+==12320==    by 0x1092A5: printSum (c19.c:22) 
+
+==12320==    by 0x1092DD: main (c19.c:28) 
+
+==12320==  If you believe this happened as a result of a stack 
+
+==12320==  overflow in your program's main thread (unlikely but 
+
+==12320==  possible), you can try to increase the size of the 
+
+==12320==  main thread stack using the --main-stacksize= flag. 
+
+==12320==  The main thread stack size used in this run was 8388608. 
+
+==12320==  
+
+==12320== HEAP SUMMARY: 
+
+==12320==     in use at exit: 2,048 bytes in 2 blocks 
+
+==12320==   total heap usage: 2 allocs, 0 frees, 2,048 bytes allocated 
+
+==12320==  
+
+==12320== LEAK SUMMARY: 
+
+==12320==    definitely lost: 0 bytes in 0 blocks 
+
+==12320==    indirectly lost: 0 bytes in 0 blocks 
+
+==12320==      possibly lost: 0 bytes in 0 blocks 
+
+==12320==    still reachable: 2,048 bytes in 2 blocks 
+
+==12320==         suppressed: 0 bytes in 0 blocks 
+
+==12320== Rerun with --leak-check=full to see details of leaked memory 
+
+==12320==  
+
+==12320== For lists of detected and suppressed errors, rerun with: -s 
+
+==12320== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0) 
+
+Segmentation fault 
+
+A mensagem do valgrind mostra que o ponteiro buf não foi inicializado corretamente antes de ser utilizado. 
+
+Já o debugger não consegui obter tanta informação com ele: 
+
+Breakpoint 3, printSum () at c19.c:22 
+
+22          sprintf(buf,"sum=%d",sum_to_n(atoi(line))); 
+
+(gdb) display buf 
+
+1: buf = 0x0 
+
+(gdb) next 
+
+  
+
+Breakpoint 1, sum_to_n (num=5) at c19.c:9 
+
+9           int i,sum=0; 
+
+1: buf = 0x0 
+
+(gdb) next 
+
+10          for(i=1;i<=num;i++) 
+
+1: buf = 0x0 
+
+(gdb) next 
+
+11              sum+=i; 
+
+1: buf = 0x0 
+
+(gdb) next 
+
+10          for(i=1;i<=num;i++) 
+
+1: buf = 0x0 
+
+(gdb) next 
+
+11              sum+=i; 
+
+1: buf = 0x0 
+
+(gdb) next 
+
+10          for(i=1;i<=num;i++) 
+
+1: buf = 0x0 
+
+3.    Portanto irei alocar com um malloc o buf dentro da função printSum e não globalmente e depois vou dar free para desalocar corretamente. 
+
+4.   Após esse processo recebi a seguinte resposta do valgrind: 
+
+==12850== Memcheck, a memory error detector 
+
+==12850== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al. 
+
+==12850== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info 
+
+==12850== Command: ./programa_reparado19 
+
+==12850==  
+
+enter a number: 
+
+5 
+
+sum=15 
+
+==12850==  
+
+==12850== HEAP SUMMARY: 
+
+==12850==     in use at exit: 0 bytes in 0 blocks 
+
+==12850==   total heap usage: 3 allocs, 3 frees, 2,058 bytes allocated 
+
+==12850==  
+
+==12850== All heap blocks were freed -- no leaks are possible 
+
+==12850==  
+
+==12850== For lists of detected and suppressed errors, rerun with: -s 
+
+==12850== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0) 
+
+Mostrando que não houver nenhum erro. 
+
+Pelo debugger percebemos que a soma ocorre da maneira adequada: 
+
+Breakpoint 1, main () at c19_reparado.c:29 
+
+29          printSum(); 
+
+(gdb) continue 
+
+Continuing. 
+
+enter a number: 
+
+5 
+
+  
+
+Breakpoint 2, printSum () at c19_reparado.c:22 
+
+22          sprintf(buf,"sum=%d",sum_to_n(atoi(line))); 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 3, sum_to_n (num=5) at c19_reparado.c:9 
+
+9           for(i=1;i<=num;i++) 
+
+(gdb) next 
+
+10              sum+=i; 
+
+(gdb) display sum 
+
+1: sum = 0 
+
+(gdb) next 
+
+9           for(i=1;i<=num;i++) 
+
+1: sum = 1 
+
+(gdb) next 
+
+10              sum+=i; 
+
+1: sum = 1 
+
+(gdb) next 
+
+9           for(i=1;i<=num;i++) 
+
+1: sum = 3 
+
+(gdb) next 
+
+10              sum+=i; 
+
+1: sum = 3 
+
+(gdb) next 
+
+9           for(i=1;i<=num;i++) 
+
+1: sum = 6 
+
+(gdb) next 
+
+10              sum+=i; 
+
+1: sum = 6 
+
+(gdb) next 
+
+9           for(i=1;i<=num;i++) 
+
+1: sum = 10 
+
+(gdb) next 
+
+10              sum+=i; 
+
+1: sum = 10 
+
+(gdb) next 
+
+9           for(i=1;i<=num;i++) 
+
+1: sum = 15 
+
+(gdb) next 
+
+11          return sum; 
+
+1: sum = 15 
+
+(gdb) next 
+
+12      } 
+
+1: sum = 15 
+
+(gdb) continue 
+
+Continuing. 
+
+sum=15 
+
+[Inferior 1 (process 13074) exited normally] 

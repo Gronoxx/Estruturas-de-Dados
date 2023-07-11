@@ -1,0 +1,217 @@
+C3.c 
+
+1.Olhando o programa percebemos que houve 10 mallocs e 1 free. Portanto, haverá vazemtno dos outros 9 malloc. 
+
+2. 
+
+==4472== Memcheck, a memory error detector 
+
+==4472== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al. 
+
+==4472== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info 
+
+==4472== Command: ./programa3 
+
+==4472==  
+
+==4472==  
+
+==4472== HEAP SUMMARY: 
+
+==4472==     in use at exit: 3,600 bytes in 9 blocks 
+
+==4472==   total heap usage: 10 allocs, 1 frees, 4,000 bytes allocated 
+
+==4472==  
+
+==4472== LEAK SUMMARY: 
+
+==4472==    definitely lost: 3,600 bytes in 9 blocks 
+
+==4472==    indirectly lost: 0 bytes in 0 blocks 
+
+==4472==      possibly lost: 0 bytes in 0 blocks 
+
+==4472==    still reachable: 0 bytes in 0 blocks 
+
+==4472==         suppressed: 0 bytes in 0 blocks 
+
+==4472== Rerun with --leak-check=full to see details of leaked memory 
+
+==4472==  
+
+==4472== For lists of detected and suppressed errors, rerun with: -s 
+
+==4472== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0) 
+
+ 
+
+Observamos que : 
+
+==4472==     in use at exit: 3,600 bytes in 9 blocks 
+
+==4472==    definitely lost: 3,600 bytes in 9 blocks 
+
+As suspeitas estavam corretas se perderam 3.600 bytes, 3600/(4(tamanho int)*100(multiplicaçãoo do int no malloc) = 9. Os 9 mallocs que faltam. 
+
+Já pelo debugger vemos o número de mallocs e o número de free pelos breakpoints. 
+
+Breakpoint 7, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 7, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 7, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 7, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:9  
+
+9	 a = malloc(sizeof(int) * 100); 
+
+Breakpoint 7, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 7, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 7, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 7, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 7, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 7, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 8, main (argc=1, argv=0x7fffffffdfc8) at /mnt/d/Tarefa Prática 3/Código Original/c3.c:11  
+
+11	 free(a); 
+
+3.Portanto, para corrigir esse problema passarei o free para dentro do loop para assim que o malloc seja criado ele também seja destruído e não vazar memória. 
+
+4. Após as alterações temos :  
+
+==5662== Memcheck, a memory error detector 
+
+==5662== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al. 
+
+==5662== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info 
+
+==5662== Command: ./programa_reparado3 
+
+==5662==  
+
+==5662==  
+
+==5662== HEAP SUMMARY: 
+
+==5662==     in use at exit: 0 bytes in 0 blocks 
+
+==5662==   total heap usage: 10 allocs, 10 frees, 4,000 bytes allocated 
+
+==5662==  
+
+==5662== All heap blocks were freed -- no leaks are possible 
+
+==5662==  
+
+==5662== For lists of detected and suppressed errors, rerun with: -s 
+
+==5662== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0) 
+
+O valgrind não detecta nenhum erro de memória, o HEAP SUMMARY indica que foram alocados e liberados 10 blocos de memória, ou seja, não houve vazamentos. 
+
+O debugger mostra a realização da alocação e desalocação 10 vezes cada, fechando o ciclo. 
+
+Breakpoint 3, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 4, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:10  
+
+10	 free(a); 
+
+Breakpoint 3, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 4, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:10  
+
+10	 free(a); 
+
+Breakpoint 3, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 4, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:10  
+
+10	 free(a); 
+
+Breakpoint 3, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 4, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:10  
+
+10	 free(a); 
+
+Breakpoint 3, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 4, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:10  
+
+10	 free(a); 
+
+Breakpoint 3, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 4, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:10  
+
+10	 free(a); 
+
+Breakpoint 3, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 4, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:10  
+
+10	 free(a); 
+
+Breakpoint 3, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 4, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:10  
+
+10	 free(a); 
+
+Breakpoint 3, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 4, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:10  
+
+10	 free(a); 
+
+Breakpoint 3, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:9  
+
+9	 a = malloc(sizeof(int) * 100);  
+
+Breakpoint 4, main (argc=1, argv=0x7fffffffdfb8) at /mnt/d/Tarefa Prática 3/Código Reparado/c3_reparado.c:10  
+
+10	 free(a); 

@@ -1,0 +1,191 @@
+C16.c 
+
+1.    O erro desse código é a tentativa de divisão por zero. Já que quando o actual calc é chamado o valor de b passado é 0. 
+
+2. 
+
+Para conferir o comportamento do programa em relação a essa situação usaremos tanto o valgrid quanto o debugger. 
+
+O valgrind retorna: 
+
+==11339== Memcheck, a memory error detector 
+
+==11339== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al. 
+
+==11339== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info 
+
+==11339== Command: ./programa16 
+
+==11339==  
+
+==11339==  
+
+==11339== Process terminating with default action of signal 8 (SIGFPE) 
+
+==11339==  Integer divide by zero at address 0x1002E86F81 
+
+==11339==    at 0x10913B: actual_calc (c16.c:6) 
+
+==11339==    by 0x109170: calc (c16.c:15) 
+
+==11339==    by 0x109189: main (c16.c:20) 
+
+==11339==  
+
+==11339== HEAP SUMMARY: 
+
+==11339==     in use at exit: 0 bytes in 0 blocks 
+
+==11339==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated 
+
+==11339==  
+
+==11339== All heap blocks were freed -- no leaks are possible 
+
+==11339==  
+
+==11339== For lists of detected and suppressed errors, rerun with: -s 
+
+==11339== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0) 
+
+Floating point exception 
+
+Portanto, temos: 
+
+==11339==  Integer divide by zero at address 0x1002E86F81 
+
+==11339==    at 0x10913B: actual_calc (c16.c:6) 
+
+==11339==    by 0x109170: calc (c16.c:15) 
+
+==11339==    by 0x109189: main (c16.c:20) 
+
+Floating point exception 
+
+Como os pontos chaves desde relatório do valgrind. Ou seja, de fato há uma divisão por zero indevida em actual_calc que vem desde uma chamada da main. Isso não ocasiona qualquer problema de memória, apenas exceção de ponto flutuante. 
+
+Pelo debugger: 
+
+Breakpoint 3, main () at c16.c:20 
+
+20        calc(); 
+
+(gdb) display c 
+
+No symbol "c" in current context. 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 2, calc () at c16.c:15 
+
+15        actual_calc(a, b); 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 1, actual_calc (a=13, b=0) at c16.c:6 
+
+6         c=a/b; 
+
+(gdb) display c 
+
+1: c = 257 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Program received signal SIGFPE, Arithmetic exception. 
+
+0x000055555555513b in actual_calc (a=13, b=0) at c16.c:6 
+
+6         c=a/b; 
+
+1: c = 257 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Program terminated with signal SIGFPE, Arithmetic exception. 
+
+The program no longer exists. 
+
+Recebemos uma exceção aritmética, no momento da divisão c=a/b em actual_calc, comprovando que o problema de fato é a divisão por 0. 
+
+3.  Portanto, para corrigir o erro precisamos alterar o valor de b em calc para um valor diferente de 0. Optarei por 1. 
+
+4.  Como resultado o valgrind informou: 
+
+==11838== Memcheck, a memory error detector 
+
+==11838== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al. 
+
+==11838== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info 
+
+==11838== Command: ./programa_reparado16 
+
+==11838==  
+
+==11838==  
+
+==11838== HEAP SUMMARY: 
+
+==11838==     in use at exit: 0 bytes in 0 blocks 
+
+==11838==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated 
+
+==11838==  
+
+==11838== All heap blocks were freed -- no leaks are possible 
+
+==11838==  
+
+==11838== For lists of detected and suppressed errors, rerun with: -s 
+
+==11838== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0) 
+
+Já o debugger: 
+
+ 
+
+Breakpoint 2, calc () at c16_reparado.c:15 
+
+15        actual_calc(a, b); 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 5, actual_calc (a=13, b=1) at c16_reparado.c:6 
+
+6         c=a/b; 
+
+(gdb) display c 
+
+1: c = 257 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 4, main () at c16_reparado.c:21 
+
+21        return 0; 
+
+Roda o programa sem nenhum erro de exceção. 

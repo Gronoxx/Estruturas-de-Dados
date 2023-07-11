@@ -1,0 +1,173 @@
+C15.c 
+
+1.  O código não parece ter nenhum problema sintático ou de memória ou qualquer erro do gênero. Porém, não faz muito sentido a lógica do código, uma vez que temos uma função para incrementar o valor de a em 1 sendo chamada 4 vezes dentro de um for, porém toda vez que o for começa uma nova iteração o valor de a é redefinido. Além disso, não entendo o motivo do retorno da main ser o mesmo que a entrada dela. 
+
+2.  Para averiguar esse comportamento suspeito dentro do for será mais adequado o uso do debugger: 
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffdf98) at c15.c:10 
+
+10           int a = 1; 
+
+(gdb) display a 
+
+1: a = 21845 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 2, main (argc=1, argv=0x7fffffffdf98) at c15.c:11 
+
+11           a = inc(a); 
+
+1: a = 1 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffdf98) at c15.c:10 
+
+10           int a = 1; 
+
+1: a = 2 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 2, main (argc=1, argv=0x7fffffffdf98) at c15.c:11 
+
+11           a = inc(a); 
+
+1: a = 1 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffdf98) at c15.c:10 
+
+10           int a = 1; 
+
+1: a = 2 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 2, main (argc=1, argv=0x7fffffffdf98) at c15.c:11 
+
+11           a = inc(a); 
+
+1: a = 1 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffdf98) at c15.c:10 
+
+10           int a = 1; 
+
+1: a = 2 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 2, main (argc=1, argv=0x7fffffffdf98) at c15.c:11 
+
+11           a = inc(a); 
+
+1: a = 1 
+
+(gdb) continue 
+
+Continuing. 
+
+[Inferior 1 (process 10854) exited with code 01]  
+
+Percebemos que o valor de a fica alternando entre 1 e 2 sem nenhum propósito para a função de incremento nem para o for. 
+
+3.  Para consertar a lógica, é preciso retirar a declaração de a e sua inicialização do for. 
+
+4.  Após retirar do for recebemos o seguinte resultado do debugger: 
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffdf88) at c15_reparado.c:11 
+
+11           a = inc(a); 
+
+(gdb) display a 
+
+1: a = 1 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffdf88) at c15_reparado.c:11 
+
+11           a = inc(a); 
+
+1: a = 2 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffdf88) at c15_reparado.c:11 
+
+11           a = inc(a); 
+
+1: a = 3 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffdf88) at c15_reparado.c:11 
+
+11           a = inc(a); 
+
+1: a = 4 
+
+(gdb) continue 
+
+Continuing. 
+
+  
+
+Breakpoint 2, main (argc=1, argv=0x7fffffffdf88) at c15_reparado.c:14 
+
+14        return argc; 
+
+1: a = 5 
+
+(gdb) continue 
+
+Continuing. 
+
+[Inferior 1 (process 11098) exited with code 01] 
+
+Ou seja, agora o valor é incrementado de acordo com o tamanho do for, sendo inicializado em 1. 

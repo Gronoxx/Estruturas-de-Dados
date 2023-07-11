@@ -1,0 +1,238 @@
+C14.c 
+
+1.Temos muitos erros nesse código: temos três variáveis sendo declaradas sem serem inicializadas: i(por ser inicializada no for não causará grandes problemas, n (por receber um input antes de ser utilizada não causará tanto problema) e fact que pode causar grandes problemas no programa. Como queremos encontrar o fatorial de um número através da multiplicação de fact é preciso inicializar essa variável para que um valor aleatório não interfira nas operações e gere um resultado sem sentido. Além disso, não há return 0 no final da main. 
+
+2. Por ser um problema de valor de variável utilizarei o debugger para conferir se de fato os valores são aleatórios e eles interferem no resultado final do programa: 
+
+Breakpoint 1, main () at c14.c:9 
+
+9         for(i = 1; i<=n; i++)  
+
+(gdb) print fact 
+
+$1 = 0 
+
+(gdb) print i 
+
+$2 = 4096 
+
+(gdb) print n 
+
+$3 = 5 
+
+Temos que na linha 9, logo antes do for, as variáveis fact e i possuem valores aleatórios como esperado (a variável n não possui valor aleatório, pois nesse ponto do código eu já atribui valor a ela) por conta do fact ser 0 o fatorial de 5 terá como resultado 0, pois a cada iteração temos 0 = 0* i. Não sendo essa nossa intenção.Como prova: 
+
+Breakpoint 1, main () at c14.c:9 
+
+9         for(i = 1; i<=n; i++)  
+
+(gdb) display fact 
+
+1: fact = 0 
+
+(gdb) next 
+
+  
+
+Breakpoint 2, main () at c14.c:10 
+
+10          fact = fact*i; 
+
+1: fact = 0 
+
+(gdb) next 
+
+9         for(i = 1; i<=n; i++)  
+
+1: fact = 0 
+
+(gdb) next 
+
+  
+
+Breakpoint 2, main () at c14.c:10 
+
+10          fact = fact*i; 
+
+1: fact = 0 
+
+(gdb) next 
+
+9         for(i = 1; i<=n; i++)  
+
+1: fact = 0 
+
+(gdb) next 
+
+  
+
+Breakpoint 2, main () at c14.c:10 
+
+10          fact = fact*i; 
+
+1: fact = 0 
+
+(gdb) next 
+
+9         for(i = 1; i<=n; i++)  
+
+1: fact = 0 
+
+Quando printamos n antes da minha atribuição no scanf temos: 
+
+(gdb) print n 
+
+$1 = 0 
+
+3.  Para corrigir isso, iremos inicializar n=0,i=1 e fact=1. Pois, n não terá importância até a atribuição do scanf, então inicializar apenas por boa prática, i=1 pois é o valor que queremos no início do for e fact=1 para corresponder a lógica do programa de cálculo de fatorial. Além disso, adicionar o return 0 no final. 
+
+4.  Após alterações temos a seguinte resposta do debugger: 
+Breakpoint 1, main () at c14_reparado.c:9 
+
+9         for(i ; i<=n; i++)  
+
+(gdb) display n 
+
+1: n = 5 
+
+(gdb) display i 
+
+2: i = 1 
+
+(gdb) display fact 
+
+3: fact = 1 
+
+(gdb) next 
+
+10          fact = fact*i; 
+
+1: n = 5 
+
+2: i = 1 
+
+3: fact = 1 
+
+(gdb) next 
+
+9         for(i ; i<=n; i++)  
+
+1: n = 5 
+
+2: i = 1 
+
+3: fact = 1 
+
+(gdb) next 
+
+10          fact = fact*i; 
+
+1: n = 5 
+
+2: i = 2 
+
+3: fact = 1 
+
+(gdb) next 
+
+9         for(i ; i<=n; i++)  
+
+1: n = 5 
+
+2: i = 2 
+
+3: fact = 2 
+
+(gdb) next 
+
+10          fact = fact*i; 
+
+1: n = 5 
+
+2: i = 3 
+
+3: fact = 2 
+
+(gdb) next 
+
+9         for(i ; i<=n; i++)  
+
+1: n = 5 
+
+2: i = 3 
+
+3: fact = 6 
+
+(gdb) next 
+
+10          fact = fact*i; 
+
+1: n = 5 
+
+2: i = 4 
+
+3: fact = 6 
+
+(gdb) next 
+
+9         for(i ; i<=n; i++)  
+
+1: n = 5 
+
+2: i = 4 
+
+3: fact = 24 
+
+(gdb) next 
+
+10          fact = fact*i; 
+
+1: n = 5 
+
+2: i = 5 
+
+3: fact = 24 
+
+(gdb) next 
+
+9         for(i ; i<=n; i++)  
+
+1: n = 5 
+
+2: i = 5 
+
+3: fact = 120 
+
+(gdb) next 
+
+12        printf("Factorial %d = %d\n", n, fact); 
+
+1: n = 5 
+
+2: i = 6 
+
+3: fact = 120 
+
+(gdb) next 
+
+Factorial 5 = 120 
+
+13        return 0; 
+
+1: n = 5 
+
+2: i = 6 
+
+3: fact = 120 
+
+(gdb) next 
+
+14      } 
+
+1: n = 5 
+
+2: i = 6 
+
+3: fact = 120 
+
+Ou seja, agora temos valores que condizem com a lógica do programa e conseguimos calcular o fatorial de n e a cada iteração multiplicamos o valor anterior desejado pelo valor correto de i. 
