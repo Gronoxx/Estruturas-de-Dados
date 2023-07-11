@@ -1,0 +1,121 @@
+			Tarefa Prática 9
+1:
+Não pode haver a sequência 1 1 0 de filhos.
+2:
+Existem quatro casos de desbalancemento, todos eles consistem em um avô com apenas um filho, um pai com um filho e um filho sem nenhum filho. Não tem como encontrar esse padrão e não haver desbalanceamento, pois os quatro casos são todos os casos possíveis para essa sequência.
+3:
+Inicialmente, precisamos mudar o nó e fazer ele armazenar o número de filhos que ele tem e não será necessária a
+altura.Além disso, como precisamos saber informação do avô, do pai e do neto, precisamos de um apontador para o pai do nó.
+ Portanto, precisamos alterar o inserir e o remover. O inserir será modificado a fim de separar a inserção de direita e de esquerda, iremos realizar o mesmo processo que a AVL de
+ rotação dependendo do caso, precisamos separar direita e
+ esquerda para quebrar a recursividade, tornando mais fácil a identificação do número de filhos do avô e a declaração do
+ ponteiro de pai que seria complicado com a recursão.Na remoção como não precisamos da declaração do ponteiro para o
+ pai, podemos alterar o if (BF(T) == 2) para if (T->qntd_filhos==1 && T->(left ou right dependendo do caso)
+ && T->(left->left ou left->right ou ... dependendo do caso).
+ Não haverá mudança na ordem do custo, pois apenas alterei o critério, a única mudança de fato foi na inserção que foi uma
+ mudança O(1).
+
+4: 
+
+Original:
+typedef struct node {
+  int data;
+  struct node * left, * right;
+  int ht;
+} node;
+
+Modificado:
+typedef struct node {
+  int data;
+  struct node * left, * right, *father;
+  int qntd_filhos=0;
+} node;
+
+Com alterações:
+
+node * insert_right(node * T, int x, stat_t *st){
+T->qntd_filhos++;
+node * son = (node * ) malloc(sizeof(node));
+T->right = son;
+son -> data = x;
+son -> father =T;
+if(T->qntd_filhos == 1)
+if( (T->father)->qntd_filhos == 1)
+{
+	if(T->data<x){
+	T->father = RR(T->father);
+	st->RR+;		
+	}
+	else{
+	T->father = RL(T->father);
+	st->RL+;	
+	}
+}
+return S;
+}
+
+node * insert_left(node * T, int x, stat_t *st){
+T->qntd_filhos++;
+node * son = (node * ) malloc(sizeof(node));
+T->right = son;
+son -> data = x;
+son -> father =T;
+if(T->qntd_filhos == 1)
+if( (T->father)->qntd_filhos == 1)
+{
+	if(T->data>x){
+	T->father = LL(T->father);
+	st->LL+;		
+	}
+	else{
+	T->father = LR(T->father);
+	st->LR+;	
+	}
+}
+return S;
+}
+
+
+node * insert(node * T, int x, stat_t * st) {  
+  if (T == NULL) {
+    T = (node * ) malloc(sizeof(node));
+    T -> data = x;
+    T -> left = NULL;
+    T -> right = NULL;
+    return T;
+  } else
+  if (x > T -> data) // insert in right subtree
+  {
+    if(T->right == NULL)
+    return insert_right(T,x,st);
+    else{
+    T -> right = insert(T -> right, x, st);
+    if (BF(T) == -2){
+      if (x > T -> right -> data){
+        T = RR(T);
+	st->RR++;
+      } else{
+        T = RL(T);
+	st->RL++;
+      }
+    }
+   }	
+  } else
+  if (x < T -> data) {
+    if(T-> left = NULL)
+    return insert_left(T,x,st);
+    else{
+    T -> left = insert(T -> left, x, st);
+    if (BF(T) == 2){
+      if (x < T -> left -> data){
+        T = LL(T);
+	st->LL++;
+      }else{
+        T = LR(T);
+	st->LR++;
+      }
+    }
+   }
+  }
+}
+
