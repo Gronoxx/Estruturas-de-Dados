@@ -2,6 +2,8 @@
 Disciplina de Estruturas de Dados na UFMG 2023/1. O conteúdo do repositório consiste nas atividades práticas semanais e o Projetos desenvolvidos durante a disciplina
 
 As atividades práticas semanais possuem um enunciado e como resposta um código ou um relatório ou os dois.
+Para as atividades práticas com um plano, mas
+
 Os Projetos por serem mais completos possuem um enunciado maior e uma documentação detalhada, além do código.
 
 As tarefas práticas mostram a evolução durante a disciplina.
