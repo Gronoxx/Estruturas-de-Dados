@@ -1,0 +1,26 @@
+					Tarefa Prática 8
+
+1. Selecionar as estruturas de dados a serem monitorizadas
+
+2. Selecionar as funções a serem instrumentadas
+
+3. Definir as fases de monitoramento
+
+4. Instrumentar o código (pelo menos parcialmente)
+
+1:
+	As estruturas de dados a serem monitoradas serão a pilha e a fila. Utilizarei o mesmo código da Tarefa Prática 6, 
+aquele que constroi uma pilha com duas filas. Portanto, é evidente que as duas estruturas interessante a sereme analisadas são a fila
+e a pilha.
+2:
+	As funções a serem intrumentadas são as de empilhar, desempilhar, enfileirar, desenfileirar, imprimir e limpar.
+3:
+	Para não ahver apenas uma fase é preciso alterar o código. Tiraremos a parte aleatória do código para termos maior controle das fases.
+Iremos primeiro empilhar 10 números e imprimir o estado o da pilha.Depois, iremos desempilhar os 10 números e imprimir. Repare que não é necessário
+analisar a função de limpar e desempilhar separadamente, pois limpar seria exatamente a chamda de desempilhar várias vezes, mantendo 
+o mesmo comportamento.
+	São separadas em quatro fases de monitoramento: 
+	1: Empilhar.
+	2: Imprimir.
+	3: Desempilhar.
+	4: Imprimir.
